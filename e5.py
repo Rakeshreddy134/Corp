@@ -1,5 +1,7 @@
 import os
 import pytesseract
+import platform
+import shutil
 from pdf2image import convert_from_path
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, OpenAI
@@ -17,8 +19,11 @@ if not openai_api_key:
     raise ValueError("OpenAI API key is missing! Check your .env file.")
 
 # 🔹 Set up Tesseract OCR (for scanned PDFs)
-# Note: This path is Windows-specific; we'll adjust for deployment
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    if not shutil.which("tesseract"):
+        raise EnvironmentError("Tesseract is not installed or not in PATH!")
 
 # 🔹 Function to Extract Text from PDFs
 def extract_text_from_pdf(pdf_path):
@@ -116,5 +121,5 @@ def exit_app():
     farewell = f"👋 Bye, {name}! Have a great day! 😊"
     return jsonify({"farewell": farewell})
 
-if _name_ == "__main__":
+if __name__ == "__main__":
     app.run(debug=True)
