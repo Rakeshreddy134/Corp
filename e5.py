@@ -14,9 +14,9 @@ from flask import Flask, request, render_template, jsonify
 
 # 🔹 Load OpenAI API Key from .env
 load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if not openai_api_key:
-    raise ValueError("OpenAI API key is missing! Check your .env file.")
+openai_api_key = os.getenv("OPENAI_API_KEY","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")
+if not openai_api_key or openai_api_key.startswith("sk-") == False:
+    raise ValueError("❌ OpenAI API key is missing or invalid!! Check your .env file or set manually.")
 
 # 🔹 Set up Tesseract OCR (for scanned PDFs)
 if platform.system() == "Windows":
